@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Table(
-        name = "User_tbl",
+        name = "user",
         uniqueConstraints = @UniqueConstraint(
                 name = "emailId_unique",
                 columnNames = "Email"
@@ -22,17 +22,21 @@ import javax.persistence.*;
 public class User {
 
     @Id
-    @Column(name="Id")
+    @Column(name="Id", nullable = false)
     private int id;
     @Column(name="FirstName")
     private String firstName;
     @Column(name="LastName")
     private String lastName;
     @Column(
-            name="email",
+            name="Email",
             nullable = false
     )
     private String email;
+    @Column(name="Username")
+    private String username;
+    @Column(name="Password")
+    private String password;
 
 
 
