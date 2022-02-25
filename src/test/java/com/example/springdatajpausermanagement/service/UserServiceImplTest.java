@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.stereotype.Service;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -18,38 +17,34 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SpringExtension.class)
-class UserServiceTest {
+class UserServiceImplTest {
 
     @MockBean
     UserRepository userRepository;
 
     @InjectMocks
-    UserService userService;
+    UserServiceImpl userService;
 
-//    User user = new User(1,"Jon","Snow","jon@gmail.com");
-    User user = new User(1012,"Neville","Harker","nvl@gmail.com");
-
-//    User userTest = new User(0,"Jon","Snow","jon@gmail.com");
+    User user = new User(109,"Neville","Harker","nvl@gmail.com","neville","nev123");
 
 
     @Test
-    void createUser() {
+    void createUser() throws Exception {
         Mockito.when(userRepository.save(user)).thenReturn(user);
         assertEquals(user,userService.createUser(user));
     }
 
     @Test
     void editUser() throws Exception{
-        User usern = new User(1,"Shane","Cruise","shane@gmail.com");
+        User userEdited = new User(109,"Shane","Cruise","shane@gmail.com","neville","nev123");
 
         Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.ofNullable(user));
-        Mockito.when(userRepository.save(user)).thenReturn(usern);
+        Mockito.when(userRepository.save(user)).thenReturn(userEdited);
 
-        assertEquals(usern.getId(),userService.editUser(user).getId());
-        assertNotEquals(user.getFirstName(),userService.editUser(user).getFirstName());
+        assertEquals(userEdited.getId(),userService.editUser(user).getId());
+        assertNotEquals(userEdited.getFirstName(),userService.editUser(user).getFirstName());
 
     }
 
@@ -64,24 +59,25 @@ class UserServiceTest {
 
     @Test
     void deleteUser() throws Exception {
+
         Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.ofNullable(user));
-//        Mockito.when(userRepository.deleteById(user.getId())).thenReturn(user);
+        //Mockito.when(userRepository.deleteById(user.getId())).thenReturn(user);
 
         assertEquals(user,userService.searchUser(user.getId()));
 
     }
 
     @Test
-    void viewUser() {
-        User u1 = new User(105,"Jon","Snow","snow@gmail.com");
-        User u2 = new User(106,"Hanna","Michele","hanna@gmail.com");
-        User u3 = new User(107,"Neville","Dian","dian@gmail.com");
+    void viewUser() throws Exception{
+        User u1 = new User(105,"Jon","Snow","snow@gmail.com","neville","nev123");
+        User u2 = new User(106,"Hanna","Michele","hanna@gmail.com","neville","nev123");
+        User u3 = new User(107,"Neville","Dian","dian@gmail.com","neville","nev123");
 
-        List<User> userlist = new ArrayList<>(Arrays.asList(u1,u2,u3));
+        List<User> userList = new ArrayList<>(Arrays.asList(u1,u2,u3));
 
-        Mockito.when(userRepository.findAll()).thenReturn(userlist);
+        Mockito.when(userRepository.findAll()).thenReturn(userList);
 
-        assertEquals(userlist,userService.viewUser());
+        assertEquals(userList,userService.viewUser());
 
     }
 
