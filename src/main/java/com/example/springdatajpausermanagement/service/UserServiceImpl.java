@@ -19,10 +19,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(@RequestBody User user) {
         if (user == null || user.getId() == 0 || user.getEmail().length() == 0) {
-            throw new ApiRequestException("NotFound");
+            throw new ApiRequestException("User id or email not found");
         }
-
-        User savedUser = null;
+        User savedUser = userRepository.save(user);
         return savedUser;
     }
 
@@ -43,10 +42,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User searchUser(int id) throws Exception {
-        User usrSearch = null;
-        if (id > 0) {
-            usrSearch = userRepository.findById(id).get();
+        if (id <= 0) {
+            throw new Exception("User or Id must not be negative or zero");
+
         }
+        User usrSearch = userRepository.findById(id).get();
         return usrSearch;
     }
 
