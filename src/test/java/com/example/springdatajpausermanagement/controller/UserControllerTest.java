@@ -47,7 +47,7 @@ class UserControllerTest {
 
     @AfterEach
     void tearDown() {
-        System.out.println("Running: tearDown");
+//        System.out.println("Running: tearDown");
         userService = null;
         //assertNull(userService);
         //cleanup after each method

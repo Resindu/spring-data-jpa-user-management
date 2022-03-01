@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-public class UserController{
+public class UserController {
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
     ResponseEntity<UserResponse> response = null;
@@ -31,48 +31,49 @@ public class UserController{
 
     @Autowired
     ModelMapper modelMapper;
-    
+
     @Autowired
     private ConverterDto converterDto;
 
-    @RequestMapping(value = "/users",method = RequestMethod.POST)
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ResponseEntity<UserResponse> createUser(@RequestBody User user) {
-        logger.info("Requested to create user [ username:{}, email:{} ]" , new Object[]{user.getUsername(),user.getEmail()});
+        logger.info("Requested to create user [ username:{}, email:{} ]", new Object[]{user.getUsername(), user.getEmail()});
+        logger.debug("creating a user [ :{}]", user.toString());
         try {
             userResult = userService.createUser(user);
-            // convert entity to DTO
-            dtoResponse =  converterDto.convertToDto(userResult);
-            response =ResponseEntity.ok().body(dtoResponse);
+            dtoResponse = converterDto.convertToDto(userResult);  // convert entity to DTO
+            response = ResponseEntity.ok().body(dtoResponse);
             logger.info("User created successfully");
         } catch (Exception e) {
             logger.error("Error in creating user", e);
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(dtoResponse);
-           //throw new ApiRequestException("User Id or Email must not be null");
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtoResponse);
+            logger.debug("{}", response);
+            //throw new ApiRequestException("User Id or Email must not be null");
         }
-        logger.info("Response from create user [ status:{}, body:{} ]" , new Object[]{response.getStatusCode(),response.getBody()});
+        logger.info("Response from create user [ status:{}, body:{} ]", new Object[]{response.getStatusCode(), response.getBody()});
         return response;
     }
 
-    @RequestMapping(value = "/users",method = RequestMethod.PUT)
+    @RequestMapping(value = "/users", method = RequestMethod.PUT)
     public ResponseEntity<UserResponse> editUser(@RequestBody User user) {
-        logger.info("Requested to edit user [ id:{}, email:{} ]" , new Object[]{user.getId(),user.getEmail()});
+        logger.info("Requested to edit user [ id:{}, email:{} ]", new Object[]{user.getId(), user.getEmail()});
         dtoResponse = null;
         try {
             userResult = userService.editUser(user);
-            dtoResponse =  converterDto.convertToDto(userResult);
-            response =ResponseEntity.ok().body(dtoResponse);
+            dtoResponse = converterDto.convertToDto(userResult);
+            response = ResponseEntity.ok().body(dtoResponse);
             logger.info("User edited successfully");
         } catch (Exception e) {
             logger.error("Error in editing user", e);
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(dtoResponse);
         }
-        logger.info("Response from edit user [ status:{}, body:{} ]" , new Object[]{response.getStatusCode(),response.getBody()});
+        logger.info("Response from edit user [ status:{}, body:{} ]", new Object[]{response.getStatusCode(), response.getBody()});
         return response;
     }
 
-    @RequestMapping(value = "/users/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
     public ResponseEntity<UserResponse> searchUserById(@PathVariable int id) {
-        logger.info("Requested to search user [ id:{}]" , id);
+        logger.info("Requested to search user [ id:{}]", id);
         dtoResponse = null;
         try {
             userResult = userService.searchUser(id);
@@ -82,17 +83,17 @@ public class UserController{
         } catch (Exception e) {
             logger.error("Error in searching user", e);
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(dtoResponse);
-//            throw new ApiRequestException("User Id or Email must not be null");
+            //throw new ApiRequestException("User Id or Email must not be null");
         }
-        logger.info("Response from search user [ status:{}, body:{} ]" , new Object[]{response.getStatusCode(),response.getBody()});
+        logger.info("Response from search user [ status:{}, body:{} ]", new Object[]{response.getStatusCode(), response.getBody()});
         return response;
     }
 
-    @RequestMapping(value = "/users/{id}",method = RequestMethod.DELETE)
-    public ResponseEntity<UserResponse> deleteUser(@PathVariable int id){
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<UserResponse> deleteUser(@PathVariable int id) {
         logger.info("Requested to delete user [ id:{} ]", id);
         try {
-            userResult =  userService.deleteUser(id);
+            userResult = userService.deleteUser(id);
             dtoResponse = modelMapper.map(userResult, UserResponse.class);
             response = ResponseEntity.ok().body(dtoResponse);
             logger.info("User deleted successfully");
@@ -100,22 +101,22 @@ public class UserController{
             logger.error("User Id does not exist", e);
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(dtoResponse);
         }
-        logger.info("Response from delete user [ status:{}, body:{} ]" , new Object[]{response.getStatusCode(),response.getBody()});
+        logger.info("Response from delete user [ status:{}, body:{} ]", new Object[]{response.getStatusCode(), response.getBody()});
         return response;
     }
 
-    @RequestMapping(value = "/users",method = RequestMethod.GET)
-    public ResponseEntity<List<UserResponse>> viewUsers(){
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public ResponseEntity<List<UserResponse>> viewUsers() {
         try {
-            userListResult =  userService.viewUser().stream().map(user -> modelMapper.map(user, UserResponse.class))
+            userListResult = userService.viewUser().stream()
+                    .map(user -> modelMapper.map(user, UserResponse.class))
                     .collect(Collectors.toList());
             listResponse = ResponseEntity.ok().body(userListResult);
         } catch (Exception e) {
-            logger.error("User Id does not exist",e.getMessage());
+            logger.error("User Id does not exist", e.getMessage());
             listResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(userListResult);
-
         }
-        logger.info("Response from view user [ status:{}, body:{} ]" , new Object[]{listResponse.getStatusCode(),listResponse.getBody()});
+        logger.info("Response from view user [ status:{}, body:{} ]", new Object[]{listResponse.getStatusCode(), listResponse.getBody()});
         return listResponse;
     }
 }
